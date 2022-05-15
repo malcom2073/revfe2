@@ -1,0 +1,109 @@
+version: '3.5'
+
+services:
+  backend:
+    image: docker_backend
+    hostname: backend
+#    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+#    volumes:
+#      - './msapi:/usr/src/app'
+#      - ./upload:/upload
+#    networks:
+#      - backend
+#      - backplane-net
+#      - db
+    ports:
+      - 5000:5000
+    environment:
+      - FLASK_CONFIG=development
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_PORT=${DB_PORT}
+      - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASS}@${DB_HOST}:5432/${DB_DATABASE}
+      - SECRET_KEY="${BACKEND_SECRET_KEY}"
+#      - NEXT_PUBLIC_MSAPI_ENDPOINT=https://api.mikesshop.net 
+    depends_on:
+      - db
+
+
+  db:
+#    restart: always
+#    image: 10.0.0.252:5000/docker_db
+    image: postgres:11.1-alpine
+    hostname: pg
+#    build:
+#      context: ./db
+#      dockerfile: Dockerfile
+#    networks:
+#      - backplane-net
+#      - db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=test_db
+
+  loadbalancer:
+    image: docker_nginx
+    hostname: nginx
+    build:
+      context: ./loadbalancer
+      dockerfile: Dockerfile
+#    restart: unless-stopped
+#    networks:
+#      - backend
+#      - backplane-net
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+      - frontend
+
+  frontend:
+    image: docker_frontend
+#    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+#    volumes:
+#      - '/usr/src/app/node_modules/'
+#      - './app:/usr/src/app'
+#    volumes:
+#      - '../:/usr/src/app'
+#    networks:
+#      - backplane-net
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_SERVICE_URL=http://localhost:8080
+      - CHOKIDAR_USEPOLLING=true
+      - NEXT_TELEMETRY_DISABLED=1
+      - NEXT_PUBLIC_MSAPI_ENDPOINT=https://api.mikesshop.net
+    depends_on:
+      - backend
+
+
+#networks:
+#  backplane-net:
+#    driver: overlay
+#    external: true
+
+#networks:
+#  frontend:
+#    driver: bridge
+##    name: custom-driver-1
+#  backend:
+#    name: custom-driver-2
+#  db:
+#    name: custom-driver-3

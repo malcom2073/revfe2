@@ -1,0 +1,137 @@
+version: '3.5'
+
+services:
+  backend:
+    image: docker_backend
+    #restart: always
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    volumes:
+#      - './api:/usr/src/app'
+    volumes:
+      - './backend/app:/usr/src/app'
+      - ./upload:/upload
+#    networks:
+#      - backend
+#      - frontend
+#      - db
+    ports:
+      - 5000:5000
+    environment:
+      - FLASK_CONFIG=development
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_HOST=db
+      - DB_DATABASE=test_db
+      - DB_PORT=5432
+      - BACKEND_SECRET_KEY="213491278912341234"
+      - NEXT_PUBLIC_MSAPI_ENDPOINT=http://mikesshop.net 
+    depends_on:
+      - db
+    #command: bash -c "ls /usr/src/app"
+    command: pytest tests
+
+  backend-test:
+    image: docker_backend_test
+    build:
+      context: ./backend-test
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend-test/app:/usr/src/app
+    #command: bash -c "ls /usr/src/app"
+    depends_on:
+      - backend
+#    network: host
+#    networks:
+#      - frontend
+#  test:
+#    image: docker_test
+#    build:
+#      context: ./test
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ./test/app:/usr/src/app
+##    network: host
+#    networks:
+#      - frontend
+  db:
+    #restart: always
+    image: postgres:11.1-alpine
+#    build:
+#      context: ./db
+#      dockerfile: Dockerfile
+#    networks:
+#      - frontend
+#      - db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  loadbalancer:
+    image: docker_nginx
+    build:
+      context: ./loadbalancer
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+#      - backend
+      - frontend
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+      - frontend
+
+  frontend:
+    image: docker_frontend
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+#    volumes:
+#      - './frontend:/usr/src/app'
+#      - '/usr/src/app/node_modules'
+    command: "bash -c \"npm install ; npm run dev\""
+    volumes:
+      - './frontend/app:/usr/src/app'
+    networks:
+      - frontend
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_SERVICE_URL=http://localhost:8080
+      - CHOKIDAR_USEPOLLING=true
+      - NEXT_TELEMETRY_DISABLED=1
+      - NEXT_PUBLIC_MSAPI_ENDPOINT=http://backend:5000
+    depends_on:
+      - backend
+  # selenium:
+  #   hostname: selenium
+  #   image: selenium/standalone-firefox:4.1.4-20220427
+  #   ports:
+  #     - 4444:4444
+  #     - 7900:7900
+  #   networks:
+  #     - frontend
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #     - db
+  #     - nginx
+
+networks:
+  frontend:
+    driver: bridge
+#    name: custom-driver-1
+#  backend:
+#    name: custom-driver-2
+#  db:
+#    name: custom-driver-3

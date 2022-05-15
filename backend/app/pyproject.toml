@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools","wheel","poetry"]
+[tool.poetry]
+name = "revfe"
+version = "0.0.1"
+description = "Some description"
+authors = [ "me"]
+
+[tool.poetry.dependencies]
+python = "3.9.1"
