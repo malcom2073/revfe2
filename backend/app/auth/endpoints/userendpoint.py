@@ -13,7 +13,7 @@ from core import ERROR_KEY
 # /users/<userid>
 class UserEndpoint(MethodView):
 
-    #@reactive_flask.jwt_private
+    @reactive_flask.jwt_private
     def get(self,userid=None):
         """
         Endpoint to get a specific user
@@ -46,7 +46,7 @@ class UserEndpoint(MethodView):
             return {STATUS_KEY:FAIL_STR,ERROR_KEY:"No valid User for userid " + str(userid) + " found"},200
         return {STATUS_KEY:SUCCESS_STR,'users':[user.as_obj() for user in users]},200
 
-    #@reactive_flask.jwt_private    
+    @reactive_flask.jwt_private
     def post(self,userid=None):
        
         userjson = request.get_json()
@@ -56,12 +56,12 @@ class UserEndpoint(MethodView):
         dbsession.commit()
         return {'result':SUCCESS_STR,'result':{'id' : user.id, 'username':user.username,'name': user.name,'password':user.password}},200
 
-    #@reactive_flask.jwt_private    
+    @reactive_flask.jwt_private    
     def put(self):
         """ Responds to PUT requests """
         return "Responding to a PUT request"
 
-    #@reactive_flask.jwt_private    
+    @reactive_flask.jwt_private    
     def patch(self,userid):
         """ Responds to PATCH requests """
         dbsession = db.AppSession()
@@ -87,7 +87,7 @@ class UserEndpoint(MethodView):
 
         return "Responding to a PATCH request"
 
-    #@reactive_flask.jwt_private    
+    @reactive_flask.jwt_private
     def delete(self):
         """ Responds to DELETE requests """
         return "Responding to a DELETE request"

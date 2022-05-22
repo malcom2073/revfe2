@@ -8,6 +8,11 @@ from flask import Request
 SECRET_KEY="12345"
 import string
 import random
+# TODO: Figure out how to grab these from config
+SUCCESS_STR = "SUCCESS"
+FAIL_STR = "FAILURE"
+STATUS_KEY = "STATUS"
+ERROR_KEY = "ERROR"
 
 # 5 Minute Token timeout
 # TODO: Make thie configurable, so "remember me" will make a much MUCH longer token
@@ -138,7 +143,7 @@ def jwt_private(func):
         auth_token = getAuthToken(request)
         jwt = getJwt(request)
         if jwt is None:
-            return jsonify({'status':'failure','error':'Null session'}),401
+            return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Null session'}),401
         pprint.pprint(jwt)
         if request.path in role_routes:
             if 'role_required' in role_routes[request.path]:
@@ -151,7 +156,7 @@ def jwt_private(func):
                 if foundrole:
                     return func(*args, **kwargs)
                 else:
-                    return jsonify({'status':'failure','error':'Invalid permissions'}),401
+                    return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Invalid permissions'}),401
         else:
             return func(*args,**kwargs)
     wrapper_jwt_private.__name__ = func.__name__
