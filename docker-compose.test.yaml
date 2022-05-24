@@ -32,7 +32,7 @@ services:
     depends_on:
       - db
     #command: bash -c "ls /usr/src/app"
-    command: pytest --cov=. tests
+    command: pytest -s --cov=. tests
 
   backend-test:
     image: docker_backend_test

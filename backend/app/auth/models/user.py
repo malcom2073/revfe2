@@ -17,7 +17,9 @@ def GetUniqueConstraint():
 @dataclass
 class User:
     def as_obj(self):
-        return asdict(self)
+        retval = asdict(self)
+        retval.pop("password",None)
+        return retval
     # Dataclass definitions
 #    id: int
 #    username: str
@@ -39,6 +41,7 @@ class User:
     )
 #    usermeta: List[UserMetadata] = field(default_factory=list,metadata={ "sa": lambda: relationship("UserMetadata",lazy="joined")})
     validated: bool = field(default=False,metadata={"sa": Column(Boolean,nullable=False)})
+    siteadmin: bool = field(default=False,metadata={"sa": Column(Boolean,nullable=False)})
     __table_args__ = GetUniqueConstraint()
 #    id = Column(Integer, primary_key=True)
 #    username = Column(String)

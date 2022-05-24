@@ -50,6 +50,7 @@ def addPermission(perm):
     pass
 from auth.models.group import Group
 from auth.models.user import User
+from auth.models.permission import Permission
 #from models.permission import Permission
 def initialize_new_database(db):
     db.mapper_registry.metadata.create_all(bind=db.engine)
@@ -75,9 +76,21 @@ def populate_sample_data(db):
     #     print(ex)
     #     db.mainsession.rollback()
     #     pass
-    admingroup = Group(name="Admin")
+    userlistperm = Permission(name="users.list",description="List all users")
+    try:
+        db.mainsession.add(userlistperm)
+        db.mainsession.commit()
+    except Exception as ex:
+        print("unable to add groups to DB")
+        print(ex)
+        db.mainsession.rollback()
+        pass
+
+    admingroup = Group(name="Admin",permissions=[userlistperm])
+    regular = Group(name="Members",permissions=[])
     try:
         db.mainsession.add(admingroup)
+        db.mainsession.add(regular)
         db.mainsession.commit()
     except Exception as ex:
         print("unable to add groups to DB")
@@ -86,7 +99,7 @@ def populate_sample_data(db):
         pass
     admingroup = db.mainsession.query(Group).filter(Group.name=="Admin").first()
     print(admingroup)
-    user = User(name="Mike",username="malcom2073",password="12345",email="malcom@mike.com",groups=[admingroup],validated=True)
+    user = User(name="Mike",username="malcom2073",password="12345",email="malcom@mike.com",groups=[admingroup],validated=True,siteadmin=True)
     try:
         db.mainsession.add(user)
         db.mainsession.commit()

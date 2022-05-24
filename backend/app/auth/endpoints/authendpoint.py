@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask.views import MethodView
 import db
 import hashlib
+import core
 from auth.models.user import User
 from auth.models.group import Group
 #from auth.models.usermetadata import UserMetadata
@@ -51,31 +52,25 @@ class Authenticate(MethodView):
         dbsession.close()
         if user is None:
             print("No user",flush=True)
-            return jsonify({'status':'failure','error':'invalid credentials'}),401
+            return jsonify({core.STATUS_KEY:core.FAIL_STR,core.ERROR_KEY:'invalid credentials'}),401
         if user is None or not user.password == password:
             print("Invalid user/pass",flush=True)
-            return jsonify({'status':'failure','error':'invalid credentials'}),401
+            return jsonify({core.STATUS_KEY:core.FAIL_STR,core.ERROR_KEY:'invalid credentials'}),401
         if not user.validated:
             print("Un-validated user",flush=True)
-            return jsonify({'status':'failure','error':'Account not yet activated'}),401
+            return jsonify({core.STATUS_KEY:core.FAIL_STR,core.ERROR_KEY:'Account not yet activated'}),401
         session = request.cookies.get('session')
         m = hashlib.sha256()
         if session is None:
             session = reactive_flask.get_random_string(24)
         m.update(session.encode('utf-8'))
-
+        userdict = user.as_obj()
         # TODO: These are hardcoded at the moment.
         roleobj = {
-            'user': username,
-            'user_id': user.id,
-            'roles': [
-                'admin',
-                'member-i',
-                'member-iv'
-            ],
+            'user': userdict,
             'session': m.hexdigest()
         }
-        resp = jsonify({'status':'success','access_token':reactive_flask.encode_auth_token(roleobj)})
+        resp = jsonify({core.STATUS_KEY:core.SUCCESS_STR,'access_token':reactive_flask.encode_auth_token(roleobj)})
         resp.set_cookie("mspysid", value = session, httponly = True)
         return resp
 
@@ -92,6 +87,6 @@ class Renew(MethodView):
 
         # TODO: These are hardcoded at the moment.
         jwt_token['session'] = m.hexdigest()
-        resp = jsonify({'status':'success','access_token':reactive_flask.encode_auth_token(jwt_token)})
+        resp = jsonify({core.STATUS_KEY:core.SUCCESS_STR,'access_token':reactive_flask.encode_auth_token(jwt_token)})
         resp.set_cookie("mspysid", value = session, httponly = True)
         return resp

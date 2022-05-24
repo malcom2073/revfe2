@@ -4,6 +4,8 @@ import pprint
 import jwt
 import hashlib
 from flask import Request
+from functools import wraps
+#import db
 # I need to change the password on my luggage
 SECRET_KEY="12345"
 import string
@@ -162,3 +164,36 @@ def jwt_private(func):
     wrapper_jwt_private.__name__ = func.__name__
     return wrapper_jwt_private
     
+
+def requires_access_level(access_level):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            auth_token = getAuthToken(request)
+            jwt = getJwt(request)
+            if jwt is None:
+                return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Null session'}),401
+            #dbsession = db.AppSession()
+            groups = jwt['user']['groups']
+            print("requires_access_level: ")
+            pprint.pprint(access_level)
+            pprint.pprint(jwt)
+            found = False
+            for group in groups:
+                for perm in group['permissions']:
+                    if perm['name'] in access_level:
+                        found = True
+                        break
+            if not found:
+                return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Permission Denied'}),403
+#            pprint.pprint(perms)
+            #requser = dbsession.query(User).filter(User.id == uid).first()
+            #if not session.get('email'):
+            #    return redirect(url_for('users.login'))
+#
+#            user = User.find_by_email(session['email'])
+#            elif not user.allowed(access_level):
+#                return redirect(url_for('users.profile', message="You do not have access to that page. Sorry!"))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator

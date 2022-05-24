@@ -3,6 +3,7 @@ from flask import request
 import db
 from auth.models.user import User
 from auth.models.group import Group
+#from auth.models.permission import Permission
 import pprint
 import reactive_flask
 from core import SUCCESS_STR
@@ -14,6 +15,7 @@ from core import ERROR_KEY
 class UserEndpoint(MethodView):
 
     @reactive_flask.jwt_private
+    @reactive_flask.requires_access_level(["users.list"])
     def get(self,userid=None):
         """
         Endpoint to get a specific user
@@ -32,26 +34,43 @@ class UserEndpoint(MethodView):
                 description: Permission denied
         """
         #        users = manager.getAllUsers()
+        jwt = reactive_flask.getJwt(request)
+        dbsession = db.AppSession()
+        uid = jwt['user']['id']
+        requser = dbsession.query(User).filter(User.id == uid).first()
+        if not requser:
+            return {STATUS_KEY:FAIL_STR,ERROR_KEY:"Requesting user is not valid!"}
+#        if uid != userid:
+#            if not requser.siteadmin:
+#                # Check permissions here, are we allowed to retrieve users?
+#            return {STATUS_KEY:FAIL_STR,ERROR_KEY:"Permission Denied"}
         if userid:
-            dbsession = db.AppSession()
             user = dbsession.query(User).filter(User.id == userid).first()
             pprint.pprint(user)
             if user is None:
                 return {STATUS_KEY:FAIL_STR,ERROR_KEY:"No valid User for userid " + str(userid) + " found"},200
-            return {STATUS_KEY:SUCCESS_STR,'users':[user.as_obj()]},200
+            if uid != userid:
+                return {STATUS_KEY:SUCCESS_STR,'users':[{'name':user.name,'email':user.email}]},200
+            else:
+                return {STATUS_KEY:SUCCESS_STR,'users':[user.as_obj()]},200
         dbsession = db.AppSession()
         users = dbsession.query(User).all()
         pprint.pprint(users)
         if users is None:
             return {STATUS_KEY:FAIL_STR,ERROR_KEY:"No valid User for userid " + str(userid) + " found"},200
-        return {STATUS_KEY:SUCCESS_STR,'users':[user.as_obj() for user in users]},200
+        retval = []
+        for user in users:
+            retval.append({'name':user.name,'email':user.email})
+        return {STATUS_KEY:SUCCESS_STR,'users':retval},200
 
     @reactive_flask.jwt_private
     def post(self,userid=None):
        
         userjson = request.get_json()
         dbsession = db.AppSession()
-        user = User(userjson['name'],userjson['username'],userjson['email'],userjson['password'],[],False)
+        #perms = dbsession.query(Permission).filter(Permission.name=="users.list").all()
+        groups = dbsession.query(Group).filter(Group.name=="Members").all()
+        user = User(userjson['name'],userjson['username'],userjson['email'],userjson['password'],groups,False)
         dbsession.add(user)
         dbsession.commit()
         return {'result':SUCCESS_STR,'result':{'id' : user.id, 'username':user.username,'name': user.name,'password':user.password}},200
