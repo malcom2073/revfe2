@@ -41,7 +41,7 @@ def encode_auth_token(user_id):
 def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
-    print("Random string of length", length, "is:", result_str)
+    #print("Random string of length", length, "is:", result_str)
     return result_str
 
 def decode_auth_token(auth_token,key):
@@ -74,13 +74,13 @@ def getJwt(request: Request):
         Object: The JWT object on success, None otherwise.
     """
     auth_token = getAuthToken(request)
-    pprint.pprint(auth_token)
+    #pprint.pprint(auth_token)
     if auth_token:
         try:
             resp = decode_auth_token(auth_token,SECRET_KEY)
-            pprint.pprint(resp)
-            print("Cookies")
-            pprint.pprint(request.cookies)
+            #pprint.pprint(resp)
+            #print("Cookies")
+            #pprint.pprint(request.cookies)
             if resp:
                 if 'mspysid' in request.cookies:
                     session = request.cookies['mspysid']
@@ -89,6 +89,9 @@ def getJwt(request: Request):
                         m.update(session.encode('utf-8'))
                         if m.hexdigest() != resp['session']:
                             print('Invalid hex')
+                            pprint.pprint(resp)
+                            pprint.pprint(session)
+                            pprint.pprint(m.hexdigest())
                             return None
                     else:
                         print('No session var')
@@ -139,14 +142,14 @@ role_routes = {
  
 def jwt_private(func):
     def wrapper_jwt_private(*args, **kwargs):
-        print('Path:')
-        pprint.pprint(request.path)
-        print("Done",flush=True)
+        #print('Path:')
+        #pprint.pprint(request.path)
+        #print("Done",flush=True)
         auth_token = getAuthToken(request)
         jwt = getJwt(request)
         if jwt is None:
             return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Null session'}),401
-        pprint.pprint(jwt)
+        #pprint.pprint(jwt)
         if request.path in role_routes:
             if 'role_required' in role_routes[request.path]:
                 minrole = role_routes[request.path]['role_required']
@@ -175,9 +178,9 @@ def requires_access_level(access_level):
                 return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Null session'}),401
             #dbsession = db.AppSession()
             groups = jwt['user']['groups']
-            print("requires_access_level: ")
-            pprint.pprint(access_level)
-            pprint.pprint(jwt)
+            #print("requires_access_level: ")
+            #pprint.pprint(access_level)
+            #pprint.pprint(jwt)
             found = False
             for group in groups:
                 for perm in group['permissions']:

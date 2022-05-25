@@ -13,7 +13,7 @@ UNIQUE_USEREMAIL = False
 print(core.SQLALCHEMY_MAIN_URI)
 print(core.SQLALCHEMY_DATABASE_URI)
 try:
-    engine = create_engine(core.SQLALCHEMY_MAIN_URI, echo = True)
+    engine = create_engine(core.SQLALCHEMY_MAIN_URI, echo = False)
     conn = engine.connect()
     conn.execute("commit") # Because create database cannot happen inside a transaction block, close out the default transaction
     conn.execute("create database " + core.databasename)
@@ -22,7 +22,7 @@ except Exception as ex:
     print("Exception creating DB")
     print(str(ex))
     pass
-engine = create_engine(core.SQLALCHEMY_DATABASE_URI, echo = True)
+engine = create_engine(core.SQLALCHEMY_DATABASE_URI, echo = False)
 Session = sessionmaker(bind = engine)
 mainsession = Session() # Only valid in the main application thread!
 Model = declarative_base()
@@ -35,14 +35,14 @@ def AppSession():
 
 @core.app.before_request
 def before_request():
-    print("Opening db connection")
+    #print("Opening db connection")
     g.db = Session()
 
 
 @core.app.after_request
 def after_request(response):
     if g.db is not None:
-        print("Closin db connection")
+        #print("Closin db connection")
         g.db.close()
     return response
 
@@ -87,10 +87,12 @@ def populate_sample_data(db):
         pass
 
     admingroup = Group(name="Admin",permissions=[userlistperm])
-    regular = Group(name="Members",permissions=[])
+    regular = Group(name="Members",permissions=[userlistperm])
+    initial = Group(name="Newbie",permissions=[])
     try:
         db.mainsession.add(admingroup)
         db.mainsession.add(regular)
+        db.mainsession.add(initial)
         db.mainsession.commit()
     except Exception as ex:
         print("unable to add groups to DB")
