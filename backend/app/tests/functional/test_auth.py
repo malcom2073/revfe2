@@ -4,7 +4,7 @@ import json
 import core
 USER="malcom2073"
 PASSWORD="12345"
-DEFAULTGROUPS=2
+DEFAULTGROUPS=3
 DEFAULTUSERS=2
 def get_valid_token(client,username=USER,password=PASSWORD):
     # Authenticate to get our token
@@ -21,6 +21,8 @@ def get_valid_token(client,username=USER,password=PASSWORD):
     accesstoken = jsonresponse['access_token']
     assert 'Set-Cookie' in rv.headers
     cookie = rv.headers['Set-Cookie']
+    pprint.pprint("Valid token")
+    pprint.pprint({'Set-Cookie':cookie,'Authorization':'Bearer ' + accesstoken})
     return {'Set-Cookie':cookie,'Authorization':'Bearer ' + accesstoken}
 
 
@@ -150,62 +152,6 @@ def validate_user(client,userid):
     assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
     assert 'users' in jsonresponse
     assert jsonresponse['users'][0]['validated'] == True
-
-def test_newuser_validation(client):
-    newclientid = test_create_user(client)
-    rv = client.post('/api/authenticate',json={ 'username': "test1", 'password': "asdf" })
-    jsonresponse = json.loads(rv.data)
-    pprint.pprint(jsonresponse)
-    assert jsonresponse[core.STATUS_KEY] == core.FAIL_STR
-    validate_user(client,newclientid)
-
-    # Verify the password worked and we have a token
-#    print("AUTH JSON RESPONSE")
-#    pprint.pprint(jsonresponse)
-#    #assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
-
-def test_create_group(client):
-    authheaders = get_valid_token(client)
-    response = client.post("/api/groups",headers=authheaders,json={
-        "name":"testgroup"})
-    jsonresponse = json.loads(response.data)
-    assert 'result' in jsonresponse
-    assert 'id' in jsonresponse['result']
-    groupid = jsonresponse['result']['id']
-    jsonresponse = getGroupsSucceed(client,authheaders,groupid)
-    assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
-    assert len(jsonresponse['groups']) == 1
-    assert 'name' in jsonresponse['groups'][0] and jsonresponse['groups'][0]['name'] == "testgroup"
-    response = client.get("/api/groups",headers=authheaders)
-    jsonresponse = json.loads(response.data)
-    pprint.pprint(jsonresponse)
-    assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
-    assert len(jsonresponse["groups"]) == DEFAULTGROUPS+1 # 2 test users by default.
-    return groupid
-
-def test_edit_user(client):
-    newclientid = test_create_user(client)
-    authheaders = get_valid_token(client)
-    response = client.patch("/api/users/" + str(newclientid),headers=authheaders,json={
-        "email":"newemail"
-    })
-    jsonresponse = json.loads(response.data)
-    assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
-    assert 'users' in jsonresponse
-    assert jsonresponse['users'][0]['email'] == "newemail"
-
-
-
-def test_edit_group(client):
-    newgroupid = test_create_group(client)
-    authheaders = get_valid_token(client)
-    response = client.patch("/api/groups/" + str(newgroupid),headers=authheaders,json={
-        "name":"testgrouptwo"
-    })
-    jsonresponse = json.loads(response.data)
-    assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
-    assert 'groups' in jsonresponse
-    assert jsonresponse['groups'][0]['name'] == "testgrouptwo"
 
 
 def test_auth(client):
