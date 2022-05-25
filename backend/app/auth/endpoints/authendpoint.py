@@ -61,8 +61,8 @@ class Authenticate(MethodView):
             return jsonify({core.STATUS_KEY:core.FAIL_STR,core.ERROR_KEY:'Account not yet activated'}),401
         session = request.cookies.get('session')
         m = hashlib.sha256()
-        if session is None:
-            session = reactive_flask.get_random_string(24)
+        #if session is None:
+        session = reactive_flask.get_random_string(24)
         m.update(session.encode('utf-8'))
         userdict = user.as_obj()
         # TODO: These are hardcoded at the moment.

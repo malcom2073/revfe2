@@ -3,7 +3,7 @@ from flask import request
 import db
 from auth.models.user import User
 from auth.models.group import Group
-#from auth.models.permission import Permission
+from auth.models.permission import Permission
 import pprint
 import reactive_flask
 from core import SUCCESS_STR
@@ -69,7 +69,7 @@ class UserEndpoint(MethodView):
         userjson = request.get_json()
         dbsession = db.AppSession()
         #perms = dbsession.query(Permission).filter(Permission.name=="users.list").all()
-        groups = dbsession.query(Group).filter(Group.name=="Members").all()
+        groups = dbsession.query(Group).filter(Group.name=="Newbie").all()
         user = User(userjson['name'],userjson['username'],userjson['email'],userjson['password'],groups,False)
         dbsession.add(user)
         dbsession.commit()
@@ -93,10 +93,22 @@ class UserEndpoint(MethodView):
         # [{"key":"value"}]
         print(userjson)
         for patch in userjson:
-            #pprint.pprint(patch)
-            print(patch)
-            setattr(user,patch,userjson[patch])
-#            user[patch] = userjson[patch]
+            if 'add-group' == patch:
+                for groupstr in userjson[patch]:
+                    grouptoadd = groupstr
+                    group = dbsession.query(Group).filter(Group.name == grouptoadd).first()
+                    if group:
+                        user.groups.append(group)
+                    else:
+                        dbsession.rollback()
+                        return {STATUS_KEY:FAIL_STR,ERROR_KEY:"Unable to commit!"},200
+            elif 'remove-group' == patch:
+                pass
+            else:
+                #pprint.pprint(patch)
+                print(patch)
+                setattr(user,patch,userjson[patch])
+    #            user[patch] = userjson[patch]
         try:
             dbsession.commit()
             return {STATUS_KEY:SUCCESS_STR,'users':[user.as_obj()]},200
