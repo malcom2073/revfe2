@@ -9,6 +9,11 @@ DEFAULTUSERS=2
 from tests.functional.test_auth import get_valid_token
 from tests.utils import getUsersSucceed, getUsersFail, getUsersAdminSucceed, getUsersAdminFail, validate_user
 
+# Test noauth for every endpoint
+# Test for the initial state of the endpoint
+# Test creating
+# Test destroying
+
 def test_noauth_userslist(client):
     response = client.get("/api/users")
     jsonresponse = json.loads(response.data)

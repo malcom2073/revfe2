@@ -5,6 +5,22 @@ import pprint
 from tests.functional.test_auth import get_valid_token
 
 
+def getPermissionsSucceed(client,authheaders,permid=None):
+    print("getPermissionsSucceed")
+    if permid == None:
+        response = client.get("/api/permissions",headers=authheaders)
+        jsonresponse = json.loads(response.data)
+        assert core.STATUS_KEY in jsonresponse
+        pprint.pprint(jsonresponse)
+        assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
+        return jsonresponse
+    else:
+        response = client.get("/api/permissions/" + str(permid),headers=authheaders)
+        jsonresponse = json.loads(response.data)
+        assert core.STATUS_KEY in jsonresponse
+        assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
+        return jsonresponse
+
 def getUsersSucceed(client,authheaders,clientid=None):
     if clientid == None:
         response = client.get("/api/users",headers=authheaders)
