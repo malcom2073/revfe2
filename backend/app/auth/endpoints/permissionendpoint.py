@@ -15,6 +15,7 @@ from core import ERROR_KEY
 class PermissionEndpoint(MethodView):
 
     @reactive_flask.jwt_private
+    @reactive_flask.requires_access_level(["permissions.list"])
     def get(self,permid=None):
         """
         Endpoint to get a specific user
@@ -41,13 +42,14 @@ class PermissionEndpoint(MethodView):
                 return {STATUS_KEY:FAIL_STR,ERROR_KEY:"No valid Permission for permid " + str(permid) + " found"},200
             return {STATUS_KEY:SUCCESS_STR,'permissions':[perm.as_obj()]},200
         dbsession = db.AppSession()
-        perms = dbsession.query(Group).all()
+        perms = dbsession.query(Permission).all()
         pprint.pprint(perms)
         if perms is None:
             return {STATUS_KEY:FAIL_STR,ERROR_KEY:"No valid Permission for permid " + str(permid) + " found"},200
         return {STATUS_KEY:SUCCESS_STR,'permissions':[perm.as_obj() for perm in perms]},200
 
     @reactive_flask.jwt_private
+    @reactive_flask.requires_access_level(["permissions.create"])
     def post(self,permid=None):
        
         permjson = request.get_json()
@@ -55,7 +57,7 @@ class PermissionEndpoint(MethodView):
         perm = Permission(permjson['name'],permjson['description'])
         dbsession.add(perm)
         dbsession.commit()
-        return {'result':SUCCESS_STR,'result':{'id' : perm.id, 'name':perm.name,'description':perm.description}},200
+        return {STATUS_KEY:SUCCESS_STR,'permission':{'id' : perm.id, 'name':perm.name,'description':perm.description}},200
 
     @reactive_flask.jwt_private    
     def put(self):

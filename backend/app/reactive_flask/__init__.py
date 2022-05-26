@@ -178,17 +178,18 @@ def requires_access_level(access_level):
                 return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Null session'}),401
             #dbsession = db.AppSession()
             groups = jwt['user']['groups']
-            #print("requires_access_level: ")
-            #pprint.pprint(access_level)
-            #pprint.pprint(jwt)
+            print("requires_access_level: ")
+            pprint.pprint(access_level)
+            pprint.pprint(jwt)
             found = False
-            for group in groups:
-                for perm in group['permissions']:
-                    if perm['name'] in access_level:
-                        found = True
-                        break
-            if not found:
-                return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Permission Denied'}),403
+            if not jwt['user']['siteadmin']:
+                for group in groups:
+                    for perm in group['permissions']:
+                        if perm['name'] in access_level:
+                            found = True
+                            break
+                if not found:
+                    return jsonify({STATUS_KEY:FAIL_STR,ERROR_KEY:'Permission Denied'}),403
 #            pprint.pprint(perms)
             #requser = dbsession.query(User).filter(User.id == uid).first()
             #if not session.get('email'):
