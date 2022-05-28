@@ -3,6 +3,7 @@ from flask import request
 import db
 from auth.models.user import User
 from auth.models.group import Group
+from auth.models.permission import Permission
 import pprint
 import reactive_flask
 from core import SUCCESS_STR
@@ -32,13 +33,15 @@ class GroupEndpoint(MethodView):
                 description: Permission denied
         """
         #        users = manager.getAllUsers()
+        print("GroupsEndpoint::get")
+        print(groupid)
         if groupid:
             dbsession = db.AppSession()
-            user = dbsession.query(Group).filter(Group.id == groupid).first()
-            pprint.pprint(user)
-            if user is None:
+            group = dbsession.query(Group).filter(Group.id == groupid).first()
+            pprint.pprint(group)
+            if group is None:
                 return {STATUS_KEY:FAIL_STR,ERROR_KEY:"No valid Group for groupid " + str(groupid) + " found"},200
-            return {STATUS_KEY:SUCCESS_STR,'groups':[user.as_obj()]},200
+            return {STATUS_KEY:SUCCESS_STR,'groups':[group.as_obj()]},200
         dbsession = db.AppSession()
         groups = dbsession.query(Group).all()
         pprint.pprint(groups)
@@ -54,7 +57,7 @@ class GroupEndpoint(MethodView):
         group = Group(groupjson['name'])
         dbsession.add(group)
         dbsession.commit()
-        return {'result':SUCCESS_STR,'result':{'id' : group.id, 'name':group.name}},200
+        return {STATUS_KEY:SUCCESS_STR,'group':{'id' : group.id, 'name':group.name}},200
 
     @reactive_flask.jwt_private    
     def put(self):
@@ -74,6 +77,17 @@ class GroupEndpoint(MethodView):
         # [{"key":"value"}]
         print(groupjson)
         for patch in groupjson:
+            if 'add-permission' == patch:
+                for permstr in groupjson[patch]:
+                    permtoadd = permstr
+                    permission = dbsession.query(Permission).filter(Permission.name == permtoadd).first()
+                    if permission:
+                        group.permissions.append(permission)
+                    else:
+                        dbsession.rollback()
+                        return {STATUS_KEY:FAIL_STR,ERROR_KEY:"Unable to commit!"},200
+            elif 'remove-permission' == patch:
+                pass
             #pprint.pprint(patch)
             print(patch)
             setattr(group,patch,groupjson[patch])

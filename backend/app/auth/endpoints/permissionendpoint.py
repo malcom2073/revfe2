@@ -65,6 +65,7 @@ class PermissionEndpoint(MethodView):
         return "Responding to a PUT request"
 
     @reactive_flask.jwt_private    
+    @reactive_flask.requires_access_level(["permissions.create"])
     def patch(self,permid):
         """ Responds to PATCH requests """
         dbsession = db.AppSession()
@@ -91,6 +92,7 @@ class PermissionEndpoint(MethodView):
         return "Responding to a PATCH request"
 
     @reactive_flask.jwt_private
+    @reactive_flask.requires_access_level(["permissions.create"])
     def delete(self):
         """ Responds to DELETE requests """
         return "Responding to a DELETE request"

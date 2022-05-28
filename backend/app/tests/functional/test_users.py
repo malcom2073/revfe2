@@ -6,8 +6,7 @@ USER="malcom2073"
 PASSWORD="12345"
 DEFAULTGROUPS=3
 DEFAULTUSERS=2
-from tests.functional.test_auth import get_valid_token
-from tests.utils import getUsersSucceed, getUsersFail, getUsersAdminSucceed, getUsersAdminFail, validate_user
+from tests.utils import getUsersSucceed, getUsersFail, getUsersAdminSucceed, getUsersAdminFail, validate_user,get_valid_token,createUser
 
 # Test noauth for every endpoint
 # Test for the initial state of the endpoint
@@ -29,16 +28,13 @@ def test_initial_users(client):
 
 def test_create_user(client):
     authheaders = get_valid_token(client)
-    response = client.post("/api/users",headers=authheaders,json={
+    userjson = createUser(client,authheaders,{
         "username":"test1",
         "name":"test1",
         "email":"admin",
         "password":"asdf",
         "state":"unknown"})
-    jsonresponse = json.loads(response.data)
-    assert 'result' in jsonresponse
-    assert 'id' in jsonresponse['result']
-    clientid = jsonresponse['result']['id']
+    clientid = userjson['id']
     jsonresponse = getUsersAdminSucceed(client,authheaders,clientid)
     pprint.pprint(jsonresponse)
     assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
@@ -50,7 +46,7 @@ def test_create_user(client):
     pprint.pprint(jsonresponse)
     assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
     assert len(jsonresponse["users"]) == 3 # 2 test users by default.
-    return clientid
+    return userjson
 
 def addUserPermission(client,authheaders,clientid,permissionstr):
     authheaders = get_valid_token(client)
@@ -61,30 +57,31 @@ def addUserPermission(client,authheaders,clientid,permissionstr):
     assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
 
 def test_usertest(client):
-    newclientid = test_create_user(client)
+    newclient = test_create_user(client)
     authheaders = get_valid_token(client)
     pprint.pprint("AuthHeaders")
     pprint.pprint(authheaders)
     
-    validate_user(client,newclientid)
+    validate_user(client,authheaders,newclient['id'])
     clientauthheaders = get_valid_token(client,"test1","asdf")
     pprint.pprint("ClientAuthHeaders")
     pprint.pprint(clientauthheaders)
     getUsersFail(client,clientauthheaders)
     authheaders = get_valid_token(client)
-    addUserPermission(client,authheaders,newclientid,'members')
+    addUserPermission(client,authheaders,newclient['id'],'members')
     clientauthheaders = get_valid_token(client,"test1","asdf")
-    getUsersSucceed(client,clientauthheaders,newclientid)
+    getUsersSucceed(client,clientauthheaders,newclient['id'])
 
 
 # Verify we can't authenticat if we're not validated.
 def test_newuser_validation(client):
-    newclientid = test_create_user(client)
+    newclientjson = test_create_user(client)
     rv = client.post('/api/authenticate',json={ 'username': "test1", 'password': "asdf" })
     jsonresponse = json.loads(rv.data)
     pprint.pprint(jsonresponse)
     assert jsonresponse[core.STATUS_KEY] == core.FAIL_STR
-    validate_user(client,newclientid)
+    authheaders = get_valid_token(client)
+    validate_user(client,authheaders,newclientjson['id'])
     newclientid = get_valid_token(client,"test1","asdf")
 
     # Verify the password worked and we have a token
@@ -94,17 +91,18 @@ def test_newuser_validation(client):
 
 # Test to make sure a validated non-admin user can't access things like /api/users to list all users.
 def test_user_perms(client):
-    newclientid = test_create_user(client)
-    validate_user(client,newclientid)
+    newclientjson = test_create_user(client)
+    authheaders = get_valid_token(client)
+    validate_user(client,authheaders,newclientjson['id'])
     authheaders = get_valid_token(client,"test1","asdf")
     getUsersFail(client,authheaders)
 #    getUsersSucceed(client,authheaders,newclientid)
 #    assert False
 
 def test_edit_user(client):
-    newclientid = test_create_user(client)
+    newclientjson = test_create_user(client)
     authheaders = get_valid_token(client)
-    response = client.patch("/api/users/" + str(newclientid),headers=authheaders,json={
+    response = client.patch("/api/users/" + str(newclientjson['id']),headers=authheaders,json={
         "email":"newemail"
     })
     jsonresponse = json.loads(response.data)

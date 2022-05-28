@@ -73,7 +73,7 @@ class UserEndpoint(MethodView):
         user = User(userjson['name'],userjson['username'],userjson['email'],userjson['password'],groups,False)
         dbsession.add(user)
         dbsession.commit()
-        return {'result':SUCCESS_STR,'result':{'id' : user.id, 'username':user.username,'name': user.name,'password':user.password}},200
+        return {STATUS_KEY:SUCCESS_STR,'users':[{'id' : user.id, 'username':user.username,'name': user.name,'password':user.password}]},200
 
     @reactive_flask.jwt_private    
     def put(self):
