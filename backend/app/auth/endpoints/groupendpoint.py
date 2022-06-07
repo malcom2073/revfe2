@@ -15,6 +15,7 @@ from core import ERROR_KEY
 class GroupEndpoint(MethodView):
 
     @reactive_flask.jwt_private
+    @reactive_flask.requires_access_level(["groups.list"])
     def get(self,groupid=None):
         """
         Endpoint to get a specific user
@@ -50,6 +51,7 @@ class GroupEndpoint(MethodView):
         return {STATUS_KEY:SUCCESS_STR,'groups':[group.as_obj() for group in groups]},200
 
     @reactive_flask.jwt_private
+    @reactive_flask.requires_access_level(["permissions.create"])
     def post(self,groupid=None):
        
         groupjson = request.get_json()
@@ -65,6 +67,7 @@ class GroupEndpoint(MethodView):
         return "Responding to a PUT request"
 
     @reactive_flask.jwt_private    
+    @reactive_flask.requires_access_level(["permissions.create"])
     def patch(self,groupid):
         """ Responds to PATCH requests """
         dbsession = db.AppSession()

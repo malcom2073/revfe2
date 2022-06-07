@@ -34,16 +34,6 @@ services:
     #command: bash -c "ls /usr/src/app"
     command: pytest --cov=. tests
 
-  backend-test:
-    image: docker_backend_test
-    build:
-      context: ./backend-test
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend-test/app:/usr/src/app
-    #command: bash -c "ls /usr/src/app"
-    depends_on:
-      - backend
 #    network: host
 #    networks:
 #      - frontend

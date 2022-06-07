@@ -153,6 +153,7 @@ def validate_user(client,authheaders,userid):
     assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
     assert 'users' in jsonresponse
     assert jsonresponse['users'][0]['validated'] == True
+
 def getGroups(client,authheaders,groupid=None,success=True):
     if groupid == None:
         response = client.get("/api/groups",headers=authheaders)
