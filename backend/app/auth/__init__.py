@@ -19,5 +19,5 @@ core.app.add_url_rule("/api/groups/<groupid>", view_func=groupendpoint.GroupEndp
 core.app.add_url_rule("/api/groups", view_func=groupendpoint.GroupEndpoint.as_view("groups_api"))
 
 
-core.app.add_url_rule("/api/authenticate", view_func=Authenticate.as_view("example_apisauth"))
-core.app.add_url_rule("/api/renew", view_func=Renew.as_view("example_apisauthrenew"))
+core.app.add_url_rule("/api/auth/authenticate", view_func=Authenticate.as_view("example_apisauth"))
+core.app.add_url_rule("/api/auth/renew", view_func=Renew.as_view("example_apisauthrenew"))

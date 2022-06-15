@@ -3,7 +3,7 @@ from flask import Flask
 app = Flask(__name__)
 username="postgres"
 password="postgres"
-hostname="db"
+hostname="localhost"
 port="5432"
 databasename="test_db"
 SUCCESS_STR = "SUCCESS"
