@@ -1,6 +1,7 @@
 import Head from 'next/head'
 //import Layout, { siteTitle } from '../components/layout'
 //import utilStyles from '../styles/utils.module.css'
+import Router from 'next/router'
 import Component from 'react'
 //import Date from '../components/date'
 import { create } from 'apisauce'
@@ -102,30 +103,36 @@ type Props = {
             this.props = props;
             this.apichecktimer = 0;
             this.open = false;
-            this.state = {open:false}
+            this.state = {navmenuopen:false,anchorEl:null}
             
         }
-        public renderMenu = (
-          <Menu
-            //anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            id={menuId}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={false}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-          </Menu>
-        );
+        handleClick = (event: React.MouseEvent<HTMLElement>) => {
+            this.setState({navmenuopen:true})
+          };
+          handleClose = () => {
+            this.setState({navmenuopen:false})
+          };
         render = () => {
+            var renderMenu = (
+                <Menu
+                  anchorEl={this.state.anchorEl}
+                  id={menuId}
+                  keepMounted
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={this.state.navmenuopen}
+                  onClose={this.handleClose}
+                >
+                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                  <MenuItem><Link href="/logout"passHref>Logout</Link></MenuItem>
+                </Menu>
+              )
             console.log("pageLayout::render");
             console.log(this.props);
             return (
@@ -198,18 +205,20 @@ type Props = {
             </IconButton>
           </Box>
           {(this.props.auth) ? (
-           <Link href="/logout"passHref><Button color="inherit">Logout</Button></Link> 
+              <Button color="inherit" onClick={this.handleClick}>{this.props.auth.decodedToken.sub.user.username}</Button>
           ) : ( <Link href="/login"passHref><Button color="inherit">Login</Button></Link> )}
+           {renderMenu}
         </Toolbar>
       </AppBar>
       {/*renderMobileMenu*/}
-      {this.renderMenu}
+     
     </Box>
                             <WrappedComponent {...this.props} />
                 </>
             )
         }
         checkAuth = () => {
+            //{/*<Link href="/logout"passHref><Button color="inherit">{this.props.auth.decodedToken.sub.user.username}</Button></Link> */}
           // calling fromNext with undefined only returns the token on the client.
             const token = AuthToken.fromNext(undefined);
             var currdate = new Date();
