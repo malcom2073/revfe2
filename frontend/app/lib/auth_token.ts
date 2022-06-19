@@ -11,7 +11,7 @@ export class AuthToken {
   decodedToken: { email: string; exp: number; sub: string;};
     token: any;
     //var decodedToken: any;
-  constructor(token) {
+  constructor(token: any) {
     // we are going to default to an expired decodedToken
     this.decodedToken = { email: "", exp: 0,sub:"" };
     // Save the token, ok to be null
@@ -61,7 +61,7 @@ export class AuthToken {
 
   // Hackity hack-hack to get the cookies. I'm sure there's a library for this, but I couldn't find
   // a convenient one that I liked. This snippet is from some stackoverflow I can't find again.
-  static getCookie(name,cookies) {
+  static getCookie(name: any,cookies:any) {
     var nameEQ = name + "=";
     var ca = cookies.split(';');
     for(var i=0;i < ca.length;i++) {
@@ -74,7 +74,7 @@ export class AuthToken {
 
   // Get the auth token from cookies, if we're on server (req only exists on server)
   // And get it from local cookie storage otherwise.
-  static fromNext(req) {
+  static fromNext(req: any) {
     if (req && req.headers && req.headers.cookie) {
         var authcookie = AuthToken.getCookie(TOKEN_STORAGE_KEY,req.headers.cookie);
         return new AuthToken(authcookie);
@@ -88,7 +88,7 @@ export class AuthToken {
 
   // The login page uses this to store the cookie in a known location
   // TODO: Does this need to be done serverside too? It's not httponly, so maybe not?
-  static storeToken(token) {
+  static storeToken(token: any) {
     Cookie.set(TOKEN_STORAGE_KEY, token);
   }
 

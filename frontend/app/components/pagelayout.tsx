@@ -44,7 +44,8 @@ type Props = {
     title: string,
     query: {
         slug:string
-    }
+    },
+    auth: any
   };
 
   const Search = styled('div')(({ theme }) => ({
@@ -98,12 +99,17 @@ type Props = {
         public apichecktimer: number;
         public open: boolean;
         public props: Props;
+        public state: {
+            navmenuopen: boolean,
+            anchorEl: any,
+            pathname: any
+        }
         constructor(props:any) {
             super(props);
             this.props = props;
             this.apichecktimer = 0;
             this.open = false;
-            this.state = {navmenuopen:false,anchorEl:null}
+            this.state = {navmenuopen:false,anchorEl:null,pathname: null}
             
         }
         handleClick = (event: React.MouseEvent<HTMLElement>) => {

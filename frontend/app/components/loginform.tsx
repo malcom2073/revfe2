@@ -96,7 +96,6 @@ export default class LoginForm extends React.Component {
         this.nextUrl = this.props.next;
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
-            {/*onSubmit={(e) => { e.preventDefault(); alert('Submitted form!'); this.handleClose(); } }*/}
             <Grid container alignItems="center" justify="center" direction="column" rowSpacing="20px">
                 <Grid item>
                     <FormControl>
@@ -118,34 +117,5 @@ export default class LoginForm extends React.Component {
             </Grid>
             </form>
         );
-        /*return (
-            <Form name="basic" onFinish={this.onSubmit.bind(this)}>
-            <Form.Item
-        label="Username"
-        name="username"
-        rules={[{ required: true, message: 'Please input your username!' }]}
-        >
-        <Input />
-        </Form.Item>
-
-        <Form.Item
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-        <Input.Password />
-        </Form.Item>
-
-        <Form.Item {...tailLayout} name="remember" valuePropName="checked">
-        <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-        <Button type="primary" htmlType="submit">
-            Submit
-        </Button>
-        </Form.Item>
-            </Form>          
-        );*/
     }
 }
