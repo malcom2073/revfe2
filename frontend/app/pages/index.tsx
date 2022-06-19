@@ -17,7 +17,6 @@ class IndexPage extends React.Component {
   render() {
       return (
           <>
-<Button variant="contained">Test!</Button>
           </>
       )
   }
