@@ -32,7 +32,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import MsApi from '../lib/msapi'
-
+import modules from '../modules';
 type Props = {
     meta: {
         title: string,
@@ -163,6 +163,18 @@ type Props = {
           >
             MikesShop
           </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {modules.map((module) => (
+              <Button
+                key={module.name}
+                href={"/"+module.name}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                    {module.name}
+              </Button>      
+              ))}
+          </Box>
+          
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
