@@ -25,10 +25,12 @@ FROM python:3.9.1
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN mkdir -p /usr/src/app
-COPY app/ /usr/src/app/
 WORKDIR /usr/src/app
-#RUN rm -rf .git
+ADD app/requirements.txt /usr/src/app/requirements.txt
+ADD app/pyproject.toml /usr/src/app/pyproject.toml
 RUN poetry add $(cat /usr/src/app/requirements.txt)
+COPY app/ /usr/src/app/
+#RUN rm -rf .git
 #RUN pip install -r /usr/src/app/requirements.txt
 ENV PYTHONPATH=/usr/src/app:/usr/src/app/app
 CMD python run.py

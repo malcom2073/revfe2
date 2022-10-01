@@ -10,8 +10,8 @@ RUN mkdir -p /usr/src/app
 #RUN npm install
 
 # Copying source files
-COPY app /usr/src/app/
 WORKDIR /usr/src/app
+COPY app /usr/src/app/
 #RUN rm -rf node_modules
 #RUN rm -rf .git
 #RUN rm -rf package-lock.json

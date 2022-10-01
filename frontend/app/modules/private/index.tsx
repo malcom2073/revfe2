@@ -23,10 +23,4 @@ class Private extends React.Component {
   }
 
 }
-export default {
-    routeProps: { // This gets passed straight to react-router
-        path: '/private', // Where the module lives in the nav hierarchy
-        component: privateRoute(pageLayout(Private)) // The actual component itself
-    },
-    name: 'private' // The name of the module
-};
+export default Private;
