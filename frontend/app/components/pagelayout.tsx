@@ -167,7 +167,7 @@ type Props = {
           {modules.map((module) => (
               <Button
                 key={module.name}
-                href={"/"+module.name}
+                href={"/mod/"+module.name}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                     {module.name}
