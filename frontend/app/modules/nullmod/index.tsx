@@ -8,19 +8,18 @@ import Button from '@mui/material/Button';
 class NullMod extends React.Component {
   constructor(props: any)
   {
-      super(props);
+    super(props);
   }
   componentDidMount = () => {
-      //Router.push('/blog');
+    //Router.push('/blog');
   }
   
   render() {
-      return (
-          <>
-NullMod
-          </>
-      )
+    return (
+      <>
+        NullMod
+      </>
+    )
   }
-
 }
 export default NullMod

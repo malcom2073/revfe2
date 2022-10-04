@@ -5,6 +5,7 @@ import Router from 'next/router'
 
 export default function privateRoute(WrappedComponent: JSX.IntrinsicAttributes) {
     return class extends Component {
+        static displayName = "Base";
         state = {
             auth: new AuthToken(this.props.token)
         };

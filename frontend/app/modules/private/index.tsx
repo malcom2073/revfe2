@@ -8,19 +8,18 @@ import Button from '@mui/material/Button';
 class Private extends React.Component {
   constructor(props: any)
   {
-      super(props);
+    super(props);
   }
   componentDidMount = () => {
-      //Router.push('/blog');
+    //Router.push('/blog');
   }
   
   render() {
-      return (
-          <>
-<Button variant="contained">Private Page!</Button>
-          </>
-      )
+    return (
+      <>
+        <Button variant="contained">Private Page!</Button>
+      </>
+    )
   }
-
 }
 export default Private;
