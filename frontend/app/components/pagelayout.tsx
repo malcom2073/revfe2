@@ -155,23 +155,27 @@ type Props = {
           >
             <MenuIcon />
           </IconButton>
+          <Link href="/"passHref>
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
+            
             MikesShop
           </Typography>
+          </Link> 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           {modules.map((module) => (
+            <Link href={"/mod/"+module.name} passHref>
               <Button
                 key={module.name}
-                href={"/mod/"+module.name}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                     {module.name}
-              </Button>      
+              </Button>
+              </Link>
               ))}
           </Box>
           

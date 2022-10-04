@@ -40,7 +40,7 @@ class Mod extends React.Component {
         return <ComponentToRender/>
         }
         else {
-            const ComponentToRender = this.Components["nullmod"];
+            const ComponentToRender = pageLayout(this.Components["nullmod"]);
             return <ComponentToRender/>
             }
       return (
