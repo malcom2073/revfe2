@@ -1,5 +1,3 @@
 import Private from './private';
 
-export default [
-  Private
-];
+export default [Private];
