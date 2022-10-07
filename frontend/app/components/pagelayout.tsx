@@ -60,7 +60,13 @@ export default function pageLayout(WrappedComponent: any) {
       this.props = props;
       this.apichecktimer = 0;
       this.open = false;
-      this.state = { navmenuopen: false, anchorEl: null, pathname: null };
+      const token = AuthToken.fromNext(undefined);
+      this.state = {
+        navmenuopen: false,
+        anchorEl: null,
+        pathname: null,
+        auth: token
+      };
     }
     handleClick = (event: React.MouseEvent<HTMLElement>) => {
       this.setState({ navmenuopen: true });
@@ -93,6 +99,7 @@ export default function pageLayout(WrappedComponent: any) {
           </MenuItem>
         </Menu>
       );
+      const { badauth, ...propsWithoutAuth } = this.props;
       console.log('pageLayout::render');
       console.log(this.props);
       return (
@@ -119,18 +126,47 @@ export default function pageLayout(WrappedComponent: any) {
                     MikesShop
                   </Typography>
                 </Link>
+                <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+                  <Link
+                    key={'TopLevelPublic' + 'link'}
+                    href={'/toplevelpublic'}
+                    passHref
+                  >
+                    <Button
+                      key={'TopLevelPublic'}
+                      sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                      {'TopLevelPublic'}
+                    </Button>
+                  </Link>
+                </Box>
+                <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+                  <Link
+                    key={'TopLevelPrivate' + 'link'}
+                    href={'/toplevelprivate'}
+                    passHref
+                  >
+                    <Button
+                      key={'TopLevelPrivate'}
+                      sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                      {'TopLevelPrivate'}
+                    </Button>
+                  </Link>
+                </Box>
+
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                   {modules.map(module => (
                     <Link
-                      key={module.name + 'link'}
-                      href={'/mod/' + module.name}
+                      key={module[0].name + 'link'}
+                      href={'/mod/' + module[0].name}
                       passHref
                     >
                       <Button
-                        key={module.name}
+                        key={module[0].name}
                         sx={{ my: 2, color: 'white', display: 'block' }}
                       >
-                        {module.name}
+                        {module[0].name}
                       </Button>
                     </Link>
                   ))}
@@ -159,9 +195,9 @@ export default function pageLayout(WrappedComponent: any) {
                     <MoreIcon />
                   </IconButton>
                 </Box>
-                {this.props.auth ? (
+                {this.state && this.state.auth && this.state.auth.isValid() ? (
                   <Button color="inherit" onClick={this.handleClick}>
-                    {this.props.auth.decodedToken.sub.user.username}
+                    {this.state.auth.decodedToken.sub.user.username}
                   </Button>
                 ) : (
                   <Link href="/login" passHref>
@@ -172,7 +208,7 @@ export default function pageLayout(WrappedComponent: any) {
               </Toolbar>
             </AppBar>
           </Box>
-          <WrappedComponent {...this.props} />
+          <WrappedComponent auth={this.state.auth} {...propsWithoutAuth} />
         </>
       );
     };
@@ -201,8 +237,8 @@ export default function pageLayout(WrappedComponent: any) {
     static getInitialProps = async (ctx: any) => {
       const auth = AuthToken.fromNext(ctx.req);
       console.log('pagelayout::getInitialProps');
-      console.log(auth);
-      console.log(ctx);
+      //console.log(auth);
+      //console.log(ctx);
       if (WrappedComponent.getInitialProps) {
         const wrappedProps = await WrappedComponent.getInitialProps(ctx);
 

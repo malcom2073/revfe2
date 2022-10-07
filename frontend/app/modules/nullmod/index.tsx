@@ -17,4 +17,4 @@ class NullMod extends React.Component {
     return <>NullMod</>;
   }
 }
-export default NullMod;
+export default [NullMod, true];

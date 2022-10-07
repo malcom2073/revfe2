@@ -13,17 +13,25 @@ export default function privateRoute(
     };
     props = {};
     apichecktimer = null;
+    constructor(props: any) {
+      super(props);
+      this.props = props;
+      //        this.state = { navmenuopen: false, anchorEl: null, pathname: null };
+    }
     static getInitialProps = async ({ server, pathname, query, req, res }) => {
       // Grab the auth token from the cookies. req only exists on server
       // TODO: Make this work on client for <Link> redirects.
+      console.log('PrivateRoute::getInitialProps');
+
       const auth = AuthToken.fromNext(req);
       const initialProps = {
-        auth: auth,
+        auth: auth.token,
         user: '',
         token: auth.token,
         pathname: pathname,
         query: query
       };
+      console.log(initialProps);
       //console.log(initialProps);
       //Check for expired auth. This should likely be replaced with valid
       //We can do some logic here for refresh tokens if we want to handle "remember me" boxes.
@@ -57,7 +65,7 @@ export default function privateRoute(
 
     componentDidMount = () => {
       //This is required to turn auth into an actual AuthToken instance, for passing into the component below.
-      this.setState({ auth: new AuthToken(this.props.auth.token) });
+      //this.setState({ auth: new AuthToken(this.props.auth.token) });
     };
 
     render = () => {

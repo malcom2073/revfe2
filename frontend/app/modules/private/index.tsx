@@ -21,4 +21,4 @@ class Private extends React.Component {
     );
   }
 }
-export default Private;
+export default [Private, true];
