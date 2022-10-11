@@ -1,5 +1,5 @@
 import { AuthToken } from '../lib/auth_token';
-import { ApisauceInstance, create } from 'apisauce';
+import { ApiResponse,ApisauceInstance, create } from 'apisauce';
 import Router from 'next/router';
 
 export default class MsApi extends Object {
@@ -20,7 +20,8 @@ export default class MsApi extends Object {
     });
   }
   async refreshToken() {
-    const response = await this.api.post('/api/auth/renew');
+    var response: ApiResponse<any>
+    response = await this.api.post('/api/auth/renew');
     if (response.problem) {
       switch (response.problem) {
         case 'CLIENT_ERROR':
@@ -40,7 +41,7 @@ export default class MsApi extends Object {
   }
   // Returns a JSON of info for the currently logged in user.
   async getUserInfo() {
-    var token = AuthToken.fromNext();
+    /*var token = AuthToken.fromNext(undefined);
     const response = await this.api.get(
       '/api/users/' + token.decodedToken.sub.user_id
     );
@@ -63,10 +64,10 @@ export default class MsApi extends Object {
       }
       alert('Unknown error');
     }
-    return response.data.users[0];
+    return response.data.users[0];*/
   }
-  async getUserNavbar(ctx) {
-    var token = AuthToken.fromNext();
+  ///async getUserNavbar(ctx) {
+    /*var token = AuthToken.fromNext();
     if (token && token.isValid()) {
       return {
         menuleft: [
@@ -215,11 +216,11 @@ export default class MsApi extends Object {
       default:
         break;
     }
-    return response.data;
-  }
+    return response.data;*/
+ // }
   // Returns a JSON of info for the currently logged in user.
-  async getUser(uid) {
-    //        var token = AuthToken.fromNext();
+  //sync getUser(uid) {
+    /*//        var token = AuthToken.fromNext();
     const response = await this.api.get('/api/users/' + uid);
     // TODO: Handle more of these errors.
     if (response.problem) {
@@ -264,8 +265,8 @@ export default class MsApi extends Object {
             alert('Unknown error');
         }
         return response.data.data;*/
-  }
-  async getUserList() {
+  //}
+  /*async getUserList() {
     var token = AuthToken.fromNext();
     const response = await this.api.get('/api/users');
     // TODO: Handle more of these errors.
@@ -310,6 +311,6 @@ export default class MsApi extends Object {
             }
             alert('Unknown error');
         }
-        return response.data.data;*/
-  }
+        return response.data.data;
+  }*/
 }

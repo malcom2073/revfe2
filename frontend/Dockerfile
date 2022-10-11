@@ -24,6 +24,6 @@ EXPOSE 3000
 
 # Running the app
 #CMD [ "npm", "start" ]
-CMD bash -c "npm install && npm run build && npm start"
+CMD bash -c "yarn install && yarn build && yarn start"
 # Running the app
 #CMD "npm" "run" "dev"

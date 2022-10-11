@@ -24,7 +24,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import MsApi from '../lib/msapi';
 import modules from '../modules';
-type Props = {
+export type Props = {
   meta: {
     title: string;
     description: string;
@@ -54,7 +54,15 @@ export default function pageLayout(WrappedComponent: any) {
       navmenuopen: boolean;
       anchorEl: any;
       pathname: any;
+      auth: any;
     };
+    static defaultProps = {
+      pathname: "",
+      title: "",
+      auth: "",
+      meta: undefined,
+      query: ""
+    }
     constructor(props: any) {
       super(props);
       this.props = props;
@@ -99,7 +107,7 @@ export default function pageLayout(WrappedComponent: any) {
           </MenuItem>
         </Menu>
       );
-      const { badauth, ...propsWithoutAuth } = this.props;
+      const { auth, ...propsWithoutAuth } = this.props;
       console.log('pageLayout::render');
       console.log(this.props);
       return (
@@ -156,7 +164,7 @@ export default function pageLayout(WrappedComponent: any) {
                 </Box>
 
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                  {modules.map(module => (
+                  {modules.map((module: any) => (
                     <Link
                       key={module[0].name + 'link'}
                       href={'/mod/' + module[0].name}

@@ -7,6 +7,10 @@ import Router from 'next/router';
 import { CompareSharp } from '@mui/icons-material';
 import { AuthToken } from '../../lib/auth_token';
 
+type Props = {
+  query: any;
+};
+
 const importModules = (module: any) =>
   lazy(() =>
     import(`../../modules/${module}`).catch(
@@ -17,9 +21,11 @@ class Mod extends React.Component {
   state: {
     views: any;
   };
+  props: Props;
   Components: any;
   constructor(props: any) {
     super(props);
+    this.props = props;
     this.Components = {};
 
     var privatereq = require('../../modules/private');
@@ -54,28 +60,10 @@ class Mod extends React.Component {
       const ComponentToRender = pageLayout(this.Components['nullmod']);
       return <ComponentToRender {...this.props} />;
     }
-    return (
-      <>
-        {this.state.views ? (
-          <div className="container">{this.state.views}</div>
-        ) : (
-          <div>Loading</div>
-        )}
-      </>
-    );
-    if (this.props.context.slug[0] == 'test') {
-      return <>Testing</>;
-    }
-    return (
-      <>
-        {JSON.stringify(this.props.context.slug)}
-        <Button variant="contained">Private Page!</Button>
-      </>
-    );
   }
 }
 export default Mod;
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context: any) => {
   //{server,pathname,query,req,res}
   var ComponentList = [];
   ComponentList.push(require('../../modules/private'));

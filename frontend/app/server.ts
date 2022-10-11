@@ -44,6 +44,7 @@ app
       console.log(`> Ready on http://localhost:${port}`);
     });
   })
-  .catch(err => {
+  .catch((err: any) => {
     console.log('Error:::::', err);
   });
+export {} // Needed to make typescript treat this file like a module

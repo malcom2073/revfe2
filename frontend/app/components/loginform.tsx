@@ -1,5 +1,6 @@
 import React from 'react';
 import { create } from 'apisauce';
+import { ApiResponse } from 'apisauce'
 import { AuthToken } from '../lib/auth_token';
 import { useRouter } from 'next/router';
 import Router from 'next/router';
@@ -24,12 +25,12 @@ export default class LoginForm extends React.Component {
     this.props = props;
     this.nextUrl = '';
   }
-  onChange = e => {
+  onChange = (e: any) => {
     // Because we named the inputs to match their corresponding values in state, it's
     // super easy to update the state
     this.setState({ [e.target.name]: e.target.value });
   };
-  onSubmit = async e => {
+  onSubmit = async (e: any) => {
     e.preventDefault();
     console.log('Login form onsubmit clicked');
     //return false;
@@ -41,7 +42,8 @@ export default class LoginForm extends React.Component {
       baseURL: process.env.REACT_APP_MSAPI_ENDPOINT,
       headers: { Accept: 'application/json' }
     });
-    const response = await api.post('/api/auth/authenticate', {
+    var response: ApiResponse<any>
+    response = await api.post('/api/auth/authenticate', {
       username: e.target.elements.username.value,
       password: e.target.elements.password.value
     });
@@ -91,7 +93,7 @@ export default class LoginForm extends React.Component {
         <Grid
           container
           alignItems="center"
-          justify="center"
+          justifyContent="center"
           direction="column"
           rowSpacing="20px"
         >
