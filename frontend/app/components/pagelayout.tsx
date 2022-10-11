@@ -57,12 +57,12 @@ export default function pageLayout(WrappedComponent: any) {
       auth: any;
     };
     static defaultProps = {
-      pathname: "",
-      title: "",
-      auth: "",
+      pathname: '',
+      title: '',
+      auth: '',
       meta: undefined,
-      query: ""
-    }
+      query: ''
+    };
     constructor(props: any) {
       super(props);
       this.props = props;

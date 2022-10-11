@@ -1,5 +1,5 @@
 import { AuthToken } from '../lib/auth_token';
-import { ApiResponse,ApisauceInstance, create } from 'apisauce';
+import { ApiResponse, ApisauceInstance, create } from 'apisauce';
 import Router from 'next/router';
 
 export default class MsApi extends Object {
@@ -20,7 +20,7 @@ export default class MsApi extends Object {
     });
   }
   async refreshToken() {
-    var response: ApiResponse<any>
+    var response: ApiResponse<any>;
     response = await this.api.post('/api/auth/renew');
     if (response.problem) {
       switch (response.problem) {
@@ -67,7 +67,7 @@ export default class MsApi extends Object {
     return response.data.users[0];*/
   }
   ///async getUserNavbar(ctx) {
-    /*var token = AuthToken.fromNext();
+  /*var token = AuthToken.fromNext();
     if (token && token.isValid()) {
       return {
         menuleft: [
@@ -217,10 +217,10 @@ export default class MsApi extends Object {
         break;
     }
     return response.data;*/
- // }
+  // }
   // Returns a JSON of info for the currently logged in user.
   //sync getUser(uid) {
-    /*//        var token = AuthToken.fromNext();
+  /*//        var token = AuthToken.fromNext();
     const response = await this.api.get('/api/users/' + uid);
     // TODO: Handle more of these errors.
     if (response.problem) {

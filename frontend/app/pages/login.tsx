@@ -36,7 +36,10 @@ class LoginPage extends React.Component {
                   onError={this.onLoginError.bind(this)}
                 ></LoginForm>
               ) : (
-                <LoginForm next={'/'} onError={this.onLoginError.bind(this)}></LoginForm>
+                <LoginForm
+                  next={'/'}
+                  onError={this.onLoginError.bind(this)}
+                ></LoginForm>
               )}
             </div>
           </header>

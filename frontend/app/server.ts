@@ -47,4 +47,4 @@ app
   .catch((err: any) => {
     console.log('Error:::::', err);
   });
-export {} // Needed to make typescript treat this file like a module
+export {}; // Needed to make typescript treat this file like a module

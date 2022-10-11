@@ -3,19 +3,17 @@ import { AuthToken } from '../lib/auth_token';
 import Router from 'next/router';
 //import MsApi from '../lib/msapi'
 type Props = {
-    token: string;
-    auth: any;
-  };
+  token: string;
+  auth: any;
+};
 type InitialProps = {
-    server: any;
-    pathname: any;
-    query: any;
-    req: any;
-    res: any;
-  };
-export default function privateRoute(
-  WrappedComponent: any
-) {
+  server: any;
+  pathname: any;
+  query: any;
+  req: any;
+  res: any;
+};
+export default function privateRoute(WrappedComponent: any) {
   return class extends Component {
     static displayName = 'Base';
     state = {
@@ -28,8 +26,14 @@ export default function privateRoute(
       this.props = props;
       //        this.state = { navmenuopen: false, anchorEl: null, pathname: null };
     }
-    
-    static getInitialProps = async ({ server, pathname, query, req, res }: InitialProps) => {
+
+    static getInitialProps = async ({
+      server,
+      pathname,
+      query,
+      req,
+      res
+    }: InitialProps) => {
       // Grab the auth token from the cookies. req only exists on server
       // TODO: Make this work on client for <Link> redirects.
       console.log('PrivateRoute::getInitialProps');

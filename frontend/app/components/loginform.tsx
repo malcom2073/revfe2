@@ -1,6 +1,6 @@
 import React from 'react';
 import { create } from 'apisauce';
-import { ApiResponse } from 'apisauce'
+import { ApiResponse } from 'apisauce';
 import { AuthToken } from '../lib/auth_token';
 import { useRouter } from 'next/router';
 import Router from 'next/router';
@@ -42,7 +42,7 @@ export default class LoginForm extends React.Component {
       baseURL: process.env.REACT_APP_MSAPI_ENDPOINT,
       headers: { Accept: 'application/json' }
     });
-    var response: ApiResponse<any>
+    var response: ApiResponse<any>;
     response = await api.post('/api/auth/authenticate', {
       username: e.target.elements.username.value,
       password: e.target.elements.password.value

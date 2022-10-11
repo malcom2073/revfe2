@@ -7,10 +7,10 @@ import privateRoute from '../components/privateroute';
 import Button from '@mui/material/Button';
 
 class TopLevelPrivate extends React.Component {
-  props: Props
+  props: Props;
   constructor(props: any) {
     super(props);
-    this.props = props
+    this.props = props;
   }
   componentDidMount = () => {
     //Router.push('/blog');
