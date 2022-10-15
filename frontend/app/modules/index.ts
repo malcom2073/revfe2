@@ -1,3 +1,3 @@
 import Private from './private';
-
-export default [Private];
+import UserInfo from './userinfo';
+export default [Private, UserInfo];

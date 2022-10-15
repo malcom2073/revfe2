@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Router from 'next/router';
 import { CompareSharp } from '@mui/icons-material';
 import { AuthToken } from '../../lib/auth_token';
-
+import modules from '../../modules';
 type Props = {
   query: any;
 };
@@ -27,15 +27,12 @@ class Mod extends React.Component {
     super(props);
     this.props = props;
     this.Components = {};
-
-    var privatereq = require('../../modules/private');
-
-    this.Components['Private'] = privatereq.default;
-    console.log('*********************');
-    console.log(privatereq);
+    for (var i = 0; i < modules.length; i++) {
+      //ComponentList.push(modules[i][0])
+      this.Components[modules[i][0].name] = require('../../modules/' +
+        modules[i][0].name.toLowerCase()).default;
+    }
     this.Components['nullmod'] = require('../../modules/nullmod').default;
-    //this.Components['Component2'] = require('./Component2').default;
-    //this.Components['Component3'] = require('./Component3').default;
     this.state = { views: undefined };
   }
   componentDidMount = () => {
@@ -46,14 +43,16 @@ class Mod extends React.Component {
   };
 
   render() {
-    if (this.props.query.slug[0] == 'Private') {
-      if (this.Components['Private'][1]) {
+    if (this.props.query.slug[0] in this.Components) {
+      if (this.Components[this.props.query.slug[0]][1]) {
         const ComponentToRender = pageLayout(
-          privateRoute(this.Components['Private'][0])
+          privateRoute(this.Components[this.props.query.slug[0]][0])
         );
         return <ComponentToRender {...this.props} />;
       } else {
-        const ComponentToRender = pageLayout(this.Components['Private'][0]);
+        const ComponentToRender = pageLayout(
+          this.Components[this.props.query.slug[0]][0]
+        );
         return <ComponentToRender {...this.props} />;
       }
     } else {
@@ -65,9 +64,29 @@ class Mod extends React.Component {
 export default Mod;
 export const getServerSideProps = async (context: any) => {
   //{server,pathname,query,req,res}
+  //import modules from '../modules';
+  /*modules.map((module: any) => (
+                    <Link
+                      key={module[0].name + 'link'}
+                      href={'/mod/' + module[0].name}
+                      passHref
+                    >
+                      <Button
+                        key={module[0].name}
+                        sx={{ my: 2, color: 'white', display: 'block' }}
+                      >
+                        {module[0].name}
+                      </Button>
+                    </Link>*/
   var ComponentList = [];
-  ComponentList.push(require('../../modules/private'));
-  ComponentList.push(require('../../modules/nullmod'));
+  for (var i = 0; i < modules.length; i++) {
+    //ComponentList.push(modules[i][0])
+    ComponentList.push(
+      require('../../modules/' + modules[i][0].name.toLowerCase())
+    );
+  }
+  //  ComponentList.push(require('../../modules/private'));
+  //  ComponentList.push(require('../../modules/nullmod'));
   console.log('Mod slug serverside');
   console.log(context);
   const auth = AuthToken.fromNext(context.req);
