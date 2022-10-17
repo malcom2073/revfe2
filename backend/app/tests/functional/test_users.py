@@ -76,7 +76,7 @@ def test_usertest(client):
 # Verify we can't authenticat if we're not validated.
 def test_newuser_validation(client):
     newclientjson = test_create_user(client)
-    rv = client.post('/api/authenticate',json={ 'username': "test1", 'password': "asdf" })
+    rv = client.post('/api/auth/authenticate',json={ 'username': "test1", 'password': "asdf" })
     jsonresponse = json.loads(rv.data)
     pprint.pprint(jsonresponse)
     assert jsonresponse[core.STATUS_KEY] == core.FAIL_STR

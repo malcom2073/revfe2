@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import React from 'react';
 import pageLayout from '../components/pagelayout';
 import LoginForm from '../components/loginform';
@@ -19,6 +20,9 @@ class LoginPage extends React.Component {
     console.log(this.props.query);
     return (
       <>
+        <Head>
+          <meta name="pathname" content="/login"></meta>
+        </Head>
         <div
           className="App"
           style={{

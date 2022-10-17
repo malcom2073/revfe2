@@ -16,6 +16,9 @@ services:
 #      - backend
 #      - frontend
 #      - db
+    networks:
+      - revfe2_frontend
+
     ports:
       - 5000:5000
     environment:
@@ -43,6 +46,9 @@ services:
 #    networks:
 #      - frontend
 #      - db
+    networks:
+      - revfe2_frontend
+
     ports:
       - 5432:5432
     volumes:
@@ -58,6 +64,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 80:80
+    networks:
+      - revfe2_frontend
     depends_on:
       - backend
       - frontend
@@ -76,6 +84,9 @@ services:
       - './frontend/app:/usr/src/app'
 #    networks:
 #      - frontend
+    networks:
+      - revfe2_frontend
+
     ports:
       - 3000:3000
     environment:
@@ -99,8 +110,8 @@ services:
   #     - nginx
 
 networks:
-  frontend:
-    driver: bridge
+  revfe2_frontend:
+    external: true
 #    name: custom-driver-1
 #  backend:
 #    name: custom-driver-2

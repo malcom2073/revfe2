@@ -119,7 +119,7 @@ export default class LoginForm extends React.Component {
             </FormControl>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" type="submit">
+            <Button name="commit" variant="contained" color="primary" type="submit">
               Submit
             </Button>
           </Grid>

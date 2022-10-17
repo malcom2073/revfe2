@@ -7,7 +7,7 @@ PASSWORD="12345"
 
 def get_valid_token(client,username=USER,password=PASSWORD):
     # Authenticate to get our token
-    rv = client.post('/api/authenticate',json={ 'username': username, 'password': password })
+    rv = client.post('/api/auth/authenticate',json={ 'username': username, 'password': password })
     jsonresponse = json.loads(rv.data)
     assert jsonresponse[core.STATUS_KEY] == core.SUCCESS_STR
     assert 'access_token' in jsonresponse

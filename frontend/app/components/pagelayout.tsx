@@ -1,3 +1,4 @@
+import Head from 'next/head';
 //import Head from 'next/head'
 import Router from 'next/router';
 //import Component from 'react'
@@ -102,7 +103,7 @@ export default function pageLayout(WrappedComponent: any) {
           <MenuItem onClick={this.handleClose}>Profile</MenuItem>
           <MenuItem>
             <Link href="/logout" passHref>
-              Logout
+              <div id="logoutlink">Logout</div>
             </Link>
           </MenuItem>
         </Menu>
@@ -112,6 +113,9 @@ export default function pageLayout(WrappedComponent: any) {
       console.log(this.props);
       return (
         <>
+        <Head>
+          <meta name="pathname" content={this.props.pathname}></meta>
+        </Head>
           <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
               <Toolbar>
@@ -204,12 +208,12 @@ export default function pageLayout(WrappedComponent: any) {
                   </IconButton>
                 </Box>
                 {this.state && this.state.auth && this.state.auth.isValid() ? (
-                  <Button color="inherit" onClick={this.handleClick}>
+                  <Button id="userbutton" color="inherit" onClick={this.handleClick}>
                     {this.state.auth.decodedToken.sub.user.username}
                   </Button>
                 ) : (
                   <Link href="/login" passHref>
-                    <Button color="inherit">Login</Button>
+                    <Button id="userbutton" color="inherit">Login</Button>
                   </Link>
                 )}
                 {renderMenu}

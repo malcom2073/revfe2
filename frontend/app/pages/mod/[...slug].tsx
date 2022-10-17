@@ -93,7 +93,7 @@ export const getServerSideProps = async (context: any) => {
   const initialProps = {
     //auth: auth.token,
     user: '',
-    token: auth.token,
+    token: (auth.token != undefined ? auth.token : ""),
     pathname: '',
     query: context.query
   };

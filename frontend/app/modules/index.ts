@@ -1,3 +1,4 @@
 import Private from './private';
 import UserInfo from './userinfo';
-export default [Private, UserInfo];
+import About from './about';
+export default [Private, UserInfo,About];

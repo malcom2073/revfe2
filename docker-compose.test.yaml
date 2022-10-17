@@ -33,6 +33,7 @@ services:
       - db
     #command: bash -c "ls /usr/src/app"
     command: pytest --cov=. tests
+    #command: bash -c "sleep 7d"
 
 #    network: host
 #    networks:
@@ -88,7 +89,7 @@ services:
 #    volumes:
 #      - './frontend:/usr/src/app'
 #      - '/usr/src/app/node_modules'
-    command: "bash -c \"npm install ; npm run dev\""
+    #command: "bash -c \"npm install ; npm run dev\""
     volumes:
       - './frontend/app:/usr/src/app'
     networks:
