@@ -90,11 +90,11 @@ export const getServerSideProps = async (context: any) => {
   console.log('Mod slug serverside');
   console.log(context);
   const auth = AuthToken.fromNext(context.req);
-  const initialProps = {
+  var initialProps = {
     //auth: auth.token,
     user: '',
     token: (auth.token != undefined ? auth.token : ""),
-    pathname: '',
+    pathname: "/mod/" + context.query.slug[0],
     query: context.query
   };
   console.log(initialProps);
@@ -110,6 +110,16 @@ export const getServerSideProps = async (context: any) => {
     if (ComponentList[i].default[0].name == context.query.slug[0]) {
       console.log('Found proper component');
       foundcomponent = ComponentList[i].default;
+    }
+  }
+  if (foundcomponent)
+  {
+    if (foundcomponent.getInitialProps) {
+      const wrappedProps = await foundcomponent.getInitialProps(context);
+      initialProps = {
+        ...wrappedProps,
+        pathname: "mod/" + context.query.slug[0]
+      }
     }
   }
   if (foundcomponent && foundcomponent[1]) {

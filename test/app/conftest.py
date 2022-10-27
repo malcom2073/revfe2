@@ -7,6 +7,7 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.firefox.options import Options
 
 
 IMPLICITLY_WAIT: Final[int] = 30
@@ -33,7 +34,8 @@ def pytest_addoption(parser):
     )
 #driver = None
 
-@pytest.fixture(scope="session")
+# Function scope means a brand new browser for each test. This takes longer than "session", but is more complete.
+@pytest.fixture(scope="function")
 def get_driver(request) -> WebDriver:
 #    global driver
     """
@@ -50,7 +52,9 @@ def get_driver(request) -> WebDriver:
             ), DesiredCapabilities.FIREFOX
         )
     else:
-        driver = webdriver.Firefox(executable_path=GECKODRIVER_PATH)
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Firefox(executable_path=GECKODRIVER_PATH,options=options)
     #driver.implicitly_wait(IMPLICITLY_WAIT)
     yield driver
     driver.close()

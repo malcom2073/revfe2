@@ -123,7 +123,7 @@ def test_homepage(get_driver):
     get_driver.save_screenshot('/usr/src/app/reports/loadhome.png')
 
 
-def test_login(get_driver):
+def test_loginpage(get_driver):
     #time.sleep(30)
     get_driver.get("http://localhost:80/login")
     found = False
@@ -133,8 +133,7 @@ def test_login(get_driver):
     assert found
     get_driver.save_screenshot('/usr/src/app/reports/login.png')
 
-
-def test_loginactual(get_driver):
+def sub_login(get_driver):
     get_driver.get("http://localhost:80")
     assert get_driver.find_element(By.ID,"userbutton").text == "LOGIN"
     get_driver.find_element(By.ID,"userbutton").click()
@@ -154,19 +153,99 @@ def test_loginactual(get_driver):
         pprint.pprint(py_ex)
         assert False
     assert get_driver.find_element(By.ID,"userbutton").text == "MALCOM2073"
+def sub_logout(get_driver):
     get_driver.find_element(By.ID,"userbutton").click()
     time.sleep(0.5)
     get_driver.find_element(By.ID,"logoutlink").click()
     try:
-        
         wait = ui.WebDriverWait(get_driver, 10).until(EC.text_to_be_present_in_element((By.ID,"userbutton"),"LOGIN")) # timeout after 10 seconds
     except (NoAlertPresentException, TimeoutException) as py_ex:
         pprint.pprint(py_ex)
         assert False
 
+def test_loginlogout(get_driver):
+    sub_login(get_driver)
+    sub_logout(get_driver)
+    
     #get_driver.get("http://loadbalancer:80/")
     #results = wait.until(lambda driver: driver.find_element_by_xpath("//meta[@name='pathname']@Content"))
     #for result in results:
     #    print(result.text)
     #    print('-'*80)
     get_driver.save_screenshot('/usr/src/app/reports/loggedin.png')
+
+def test_toplevelprivate_beforelogin(get_driver):
+    get_driver.get("http://localhost/toplevelprivate")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/login']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_toplevelprivate_afterlogin(get_driver):
+    sub_login(get_driver)
+    get_driver.get("http://localhost/toplevelprivate")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/toplevelprivate']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_toplevelpublic_beforelogin(get_driver):
+    get_driver.get("http://localhost/toplevelpublic")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/toplevelpublic']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_toplevelpublic_afterlogin(get_driver):
+    sub_login(get_driver)
+    get_driver.get("http://localhost/toplevelpublic")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/toplevelpublic']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_modprivate_beforelogin(get_driver):
+    get_driver.get("http://localhost/mod/Private")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/login']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_modprivate_afterlogin(get_driver):
+    sub_login(get_driver)
+    get_driver.get("http://localhost/mod/Private")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/mod/Private']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_modpublic_beforelogin(get_driver):
+    get_driver.get("http://localhost/mod/Public")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/mod/Public']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
+
+def test_modpublic_afterlogin(get_driver):
+    sub_login(get_driver)
+    get_driver.get("http://localhost/mod/Public")
+    try:
+        wait = ui.WebDriverWait(get_driver, 10).until(EC.presence_of_element_located((By.XPATH, "//meta[@name='pathname'][@Content='/mod/Public']"))) # timeout after 10 seconds
+    except (NoAlertPresentException, TimeoutException) as py_ex:
+        pprint.pprint(py_ex)
+        assert False
+
