@@ -3,3 +3,4 @@
 %uri=https://github.com/malcom2073/revfe2
 
 appschema 2023-01-12T00:03:04Z Michael Carpenter <github@mikesshop.net> # Create initial schema
+usergroups [appschema] 2023-01-12T00:20:45Z Michael Carpenter <github@mikesshop.net> # Creates users and group tables
